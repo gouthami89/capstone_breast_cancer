@@ -85,6 +85,13 @@ def print_evaluation_metrics(clf, x, y, scoring, cv=5, only_times=True, print_ti
             for s in scoring:
                 key = [sc for sc in scores.keys() if re.search('{}(.){}'.format(f,s),sc)]
                 print(' {: >7} {: >10} |  {: >.3f}  |  {: >.3f}  |  {: >.3f}  |'.format(f, s, np.mean(scores[key[0]]), np.min(scores[key[0]]), np.max(scores[key[0]])))
+                
+def corrupt_output(output_float, f):
+    positives = output_float[output_float==1]
+    turnovers = int(len(positives)*f)
+    turnover_index = np.random.choice(positives.index, turnovers)
+    output_float[turnover_index] = 0
+    return output_float
                
         
         

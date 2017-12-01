@@ -171,14 +171,14 @@ def biplot(good_data, reduced_data, output_float, pca):
     https://github.com/teddyroland/python-biplot
     '''
 
-    fig = pl.figure(figsize = (18,22))
-    ax = fig.add_subplot(111, projection='3d')
+    fig = pl.figure(figsize = (22,10))
+    ax1 = fig.add_subplot(1,3,3, projection='3d')
     # scatterplot of the reduced data    
     xs = reduced_data.loc[:, 'Dimension 1']
     ys = reduced_data.loc[:, 'Dimension 2']
     zs = reduced_data.loc[:, 'Dimension 3']
     
-    ax.scatter(xs, ys, zs, c=output_float, cmap='winter')
+    ax1.scatter(xs, ys, zs, c=output_float, cmap='winter')
     feature_vectors = pca.components_.T
 
     # we use scaling factors to make the arrows easier to see
@@ -186,15 +186,43 @@ def biplot(good_data, reduced_data, output_float, pca):
 
     # projections of the original features
     for i, v in enumerate(feature_vectors):
-        ax.plot([0, arrow_size*v[0]], [0, arrow_size*v[1]], [0, arrow_size*v[2]], lw=1.5, color='red')
-        ax.text(v[0]*text_pos, v[1]*text_pos, v[2]*text_pos, good_data.columns[i], color='black', 
+        ax1.plot([0, arrow_size*v[0]], [0, arrow_size*v[1]], [0, arrow_size*v[2]], lw=1.5, color='red')
+        ax1.text(v[0]*text_pos, v[1]*text_pos, v[2]*text_pos, good_data.columns[i], color='black', 
                  ha='center', va='center', fontsize=14)
 
-    ax.set_xlabel("Dimension 1", fontsize=18)
-    ax.set_ylabel("Dimension 2", fontsize=18)
-    ax.set_zlabel("Dimension 3", fontsize=18)
+    ax1.set_xlabel("Dimension 1", fontsize=14)
+    ax1.set_ylabel("Dimension 2", fontsize=14)
+    ax1.set_zlabel("Dimension 3", fontsize=14)
 
-    ax.set_title("PC plane with original feature projections.", fontsize=18);
+    ax1.set_title("Scatter on first 3 PCs", fontsize=18);
+    
+    ax2 = fig.add_subplot(1,3,1, projection='3d')
+    cols = ['smoothness_mean', 'concavity_mean', 'compactness_se']
+    # scatterplot of the reduced data    
+    xs = good_data.loc[:, cols[0]]
+    ys = good_data.loc[:, cols[1]]
+    zs = good_data.loc[:, cols[2]]
+    
+    ax2.scatter(xs, ys, zs, c=output_float, cmap='winter')
+    ax2.set_xlabel(cols[0], fontsize=14)
+    ax2.set_ylabel(cols[1], fontsize=14)
+    ax2.set_zlabel(cols[2], fontsize=14)
+
+    ax2.set_title("Scatter on any 3 'non-significant' features", fontsize=18);
+    
+    ax3 = fig.add_subplot(1,3,2, projection='3d')
+    cols = ['area_mean', 'texture_mean', 'fractal_dimension_mean']
+    # scatterplot of the reduced data    
+    xs = good_data.loc[:, cols[0]]
+    ys = good_data.loc[:, cols[1]]
+    zs = good_data.loc[:, cols[2]]
+    
+    ax3.scatter(xs, ys, zs, c=output_float, cmap='winter')
+    ax3.set_xlabel(cols[0], fontsize=14)
+    ax3.set_ylabel(cols[1], fontsize=14)
+    ax3.set_zlabel(cols[2], fontsize=14)
+
+    ax3.set_title("Scatter on any 3 'significant' features", fontsize=18);
     
     fig.tight_layout()
     pl.show()
